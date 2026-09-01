@@ -10,18 +10,27 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --bg: #0a0a0f;
-            --card: #12121a;
-            --card-border: #1e1e2e;
-            --text: #e4e4e7;
-            --text-dim: #71717a;
-            --accent: #10b981;
-            --accent-glow: rgba(16, 185, 129, 0.15);
-            --accent2: #6366f1;
-            --accent2-glow: rgba(99, 102, 241, 0.15);
-            --red: #ef4444;
+            --bg: #06080d;
+            --bg2: #0b0f18;
+            --card: rgba(14, 19, 30, 0.85);
+            --card-hover: rgba(18, 24, 38, 0.95);
+            --card-border: rgba(56, 120, 255, 0.08);
+            --card-border-hover: rgba(56, 120, 255, 0.18);
+            --text: #e2e8f0;
+            --text-dim: #64748b;
+            --text-muted: #475569;
+            --blue: #3b82f6;
+            --blue-light: #60a5fa;
+            --blue-glow: rgba(59, 130, 246, 0.12);
+            --blue-glow2: rgba(59, 130, 246, 0.06);
+            --cyan: #22d3ee;
+            --purple: #8b5cf6;
+            --purple-glow: rgba(139, 92, 246, 0.12);
+            --red: #f43f5e;
             --orange: #f59e0b;
             --pink: #ec4899;
+            --green: #10b981;
+            --radius: 16px;
         }
 
         body {
@@ -30,40 +39,90 @@
             color: var(--text);
             min-height: 100vh;
             padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* AMBIENT BACKGROUND */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -40%; left: -20%;
+            width: 80%; height: 80%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.04) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -30%; right: -20%;
+            width: 70%; height: 70%;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.03) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
         }
 
         /* HEADER */
         .header {
             text-align: center;
-            padding: 30px 0 40px;
+            padding: 36px 0 32px;
+            position: relative;
+            z-index: 1;
         }
         .header h1 {
-            font-size: 2.8rem;
+            font-size: 3rem;
             font-weight: 900;
-            letter-spacing: 6px;
-            background: linear-gradient(135deg, var(--accent), #34d399, var(--accent2));
+            letter-spacing: 8px;
+            background: linear-gradient(135deg, var(--blue), var(--cyan), var(--blue-light));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-transform: uppercase;
+            text-shadow: 0 0 60px rgba(59, 130, 246, 0.3);
         }
         .header .date {
             color: var(--text-dim);
-            font-size: 0.9rem;
-            margin-top: 8px;
+            font-size: 0.85rem;
+            margin-top: 10px;
             font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+        .header .streak-row {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 16px;
         }
         .header .streak {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            margin-top: 14px;
-            padding: 6px 18px;
-            background: var(--accent-glow);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 7px 20px;
+            background: var(--blue-glow);
+            border: 1px solid rgba(59, 130, 246, 0.2);
             border-radius: 50px;
-            font-size: 0.85rem;
-            color: var(--accent);
+            font-size: 0.8rem;
+            color: var(--blue-light);
             font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        /* QUOTE */
+        .quote-bar {
+            max-width: 1200px;
+            margin: 0 auto 24px;
+            text-align: center;
+            padding: 16px 28px;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            font-style: italic;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 400;
+            backdrop-filter: blur(20px);
+            position: relative;
+            z-index: 1;
         }
 
         /* GRID */
@@ -73,21 +132,30 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
+            position: relative;
+            z-index: 1;
         }
         .grid .full { grid-column: 1 / -1; }
 
         @media (max-width: 768px) {
             .grid { grid-template-columns: 1fr; }
-            .header h1 { font-size: 2rem; letter-spacing: 4px; }
+            .header h1 { font-size: 2.2rem; letter-spacing: 5px; }
             body { padding: 12px; }
+            .money-stats { grid-template-columns: repeat(2, 1fr) !important; }
         }
 
         /* CARDS */
         .card {
             background: var(--card);
             border: 1px solid var(--card-border);
-            border-radius: 16px;
+            border-radius: var(--radius);
             padding: 24px;
+            backdrop-filter: blur(20px);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            border-color: var(--card-border-hover);
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.04);
         }
         .card-header {
             display: flex;
@@ -96,9 +164,9 @@
             margin-bottom: 20px;
         }
         .card-title {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 2.5px;
             color: var(--text-dim);
             font-weight: 600;
         }
@@ -110,112 +178,148 @@
             gap: 12px;
             margin-bottom: 20px;
         }
-        @media (max-width: 768px) {
-            .money-stats { grid-template-columns: repeat(2, 1fr); }
-        }
         .stat-box {
-            background: rgba(16, 185, 129, 0.06);
-            border: 1px solid rgba(16, 185, 129, 0.12);
-            border-radius: 12px;
-            padding: 16px;
+            background: linear-gradient(135deg, var(--blue-glow2), rgba(34, 211, 238, 0.03));
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            border-radius: 14px;
+            padding: 18px 16px;
             text-align: center;
+            transition: border-color 0.3s, transform 0.2s;
+        }
+        .stat-box:hover {
+            border-color: rgba(59, 130, 246, 0.25);
+            transform: translateY(-2px);
         }
         .stat-box .label {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 2px;
             color: var(--text-dim);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
         .stat-box .value {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 800;
-            color: var(--accent);
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        /* LOG INCOME */
+        /* INPUTS */
+        input, select {
+            padding: 12px 16px;
+            background: var(--bg2);
+            border: 1px solid rgba(56, 120, 255, 0.1);
+            border-radius: 10px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.88rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input:focus, select:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        input::placeholder { color: var(--text-muted); }
+        select option { background: var(--bg2); }
+
+        /* LOG ROW */
         .log-row {
             display: flex;
             gap: 10px;
             margin-top: 16px;
         }
-        .log-row input, .log-row select {
-            flex: 1;
-            padding: 12px 16px;
-            background: var(--bg);
-            border: 1px solid var(--card-border);
-            border-radius: 10px;
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .log-row input:focus, .log-row select:focus {
-            border-color: var(--accent);
-        }
-        .log-row input[type="number"] { max-width: 140px; }
-        .log-row select { max-width: 180px; }
+        .log-row input { flex: 1; }
+        .log-row input[type="number"] { max-width: 130px; }
+        .log-row select { max-width: 160px; }
 
+        /* BUTTONS */
         button {
             padding: 12px 20px;
-            background: var(--accent);
-            color: #000;
+            background: linear-gradient(135deg, var(--blue), #2563eb);
+            color: #fff;
             border: none;
             border-radius: 10px;
             font-family: 'Inter', sans-serif;
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.83rem;
             cursor: pointer;
             transition: all 0.2s;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
-        button:hover { opacity: 0.85; transform: translateY(-1px); }
+        button:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(59, 130, 246, 0.25); }
+        button:active { transform: translateY(0); }
         button.secondary {
-            background: var(--card-border);
+            background: rgba(59, 130, 246, 0.08);
             color: var(--text-dim);
+            border: 1px solid rgba(59, 130, 246, 0.12);
         }
+        button.secondary:hover { background: rgba(59, 130, 246, 0.14); color: var(--text); box-shadow: none; }
         button.small {
-            padding: 6px 12px;
+            padding: 7px 14px;
             font-size: 0.75rem;
             border-radius: 8px;
         }
-        button.danger { background: var(--red); }
+        button.danger {
+            background: rgba(244, 63, 94, 0.12);
+            color: var(--red);
+            border: 1px solid rgba(244, 63, 94, 0.15);
+        }
+        button.danger:hover { background: rgba(244, 63, 94, 0.2); box-shadow: none; }
+        button.purple-btn {
+            background: linear-gradient(135deg, var(--purple), #7c3aed);
+        }
 
-        /* INCOME LOG TABLE */
+        /* INCOME LOG */
         .log-entries {
             margin-top: 16px;
-            max-height: 200px;
+            max-height: 220px;
             overflow-y: auto;
         }
         .log-entry {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 14px;
-            border-bottom: 1px solid var(--card-border);
+            padding: 11px 14px;
+            border-bottom: 1px solid rgba(56, 120, 255, 0.05);
             font-size: 0.85rem;
+            transition: background 0.2s;
+            border-radius: 8px;
         }
-        .log-entry:last-child { border-bottom: none; }
+        .log-entry:hover { background: rgba(59, 130, 246, 0.04); }
         .log-entry .source-tag {
-            padding: 3px 10px;
+            padding: 4px 10px;
             border-radius: 6px;
-            font-size: 0.7rem;
-            font-weight: 600;
+            font-size: 0.68rem;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.2px;
+            flex-shrink: 0;
         }
         .log-entry .amount {
             font-weight: 700;
-            color: var(--accent);
+            color: var(--blue-light);
+            flex-shrink: 0;
+        }
+        .log-entry .log-note {
+            flex: 1;
+            margin-left: 12px;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .log-entry .log-date {
-            color: var(--text-dim);
-            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            flex-shrink: 0;
+            margin: 0 12px;
         }
         .log-entry .delete-log {
             cursor: pointer;
-            color: var(--text-dim);
+            color: var(--text-muted);
             opacity: 0;
             transition: opacity 0.2s;
             background: none;
@@ -225,16 +329,30 @@
         }
         .log-entry:hover .delete-log { opacity: 1; }
 
+        /* SOURCE COLORS */
+        .src-youtube { background: rgba(239, 68, 68, 0.12); color: #f87171; }
+        .src-trading { background: rgba(59, 130, 246, 0.12); color: #60a5fa; }
+        .src-creator { background: rgba(236, 72, 153, 0.12); color: #f472b6; }
+        .src-freelance { background: rgba(139, 92, 246, 0.12); color: #a78bfa; }
+        .src-mowing { background: rgba(16, 185, 129, 0.12); color: #34d399; }
+        .src-other { background: rgba(100, 116, 139, 0.12); color: #94a3b8; }
+
         /* GOALS */
         .goal {
-            margin-bottom: 20px;
+            margin-bottom: 22px;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--blue-glow2), transparent);
+            border: 1px solid rgba(59, 130, 246, 0.06);
+            border-radius: 14px;
+            transition: border-color 0.3s;
         }
+        .goal:hover { border-color: rgba(59, 130, 246, 0.15); }
         .goal:last-child { margin-bottom: 0; }
         .goal-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
         .goal-name {
             font-weight: 700;
@@ -244,117 +362,162 @@
             gap: 8px;
         }
         .goal-amounts {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: var(--text-dim);
         }
         .goal-amounts span {
-            color: var(--accent);
+            color: var(--blue-light);
             font-weight: 700;
         }
         .progress-bar {
             width: 100%;
-            height: 12px;
-            background: rgba(16, 185, 129, 0.1);
+            height: 10px;
+            background: rgba(59, 130, 246, 0.08);
             border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
         .progress-fill {
             height: 100%;
             border-radius: 10px;
-            background: linear-gradient(90deg, var(--accent), #34d399);
-            transition: width 0.5s ease;
+            background: linear-gradient(90deg, var(--blue), var(--cyan));
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
         }
         .progress-fill::after {
             content: '';
             position: absolute;
-            top: 0; right: 0; bottom: 0;
-            width: 30px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2));
-            border-radius: 0 10px 10px 0;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent 60%, rgba(255,255,255,0.15));
+            border-radius: 10px;
+        }
+        .goal-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .goal-pct {
-            font-size: 0.8rem;
-            color: var(--accent);
+            font-size: 0.78rem;
+            color: var(--blue-light);
             font-weight: 600;
         }
         .goal-actions {
             display: flex;
             gap: 8px;
-            margin-top: 10px;
+            align-items: center;
         }
         .goal-actions input {
-            width: 120px;
+            width: 100px;
             padding: 8px 12px;
-            background: var(--bg);
-            border: 1px solid var(--card-border);
-            border-radius: 8px;
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
-            outline: none;
+            font-size: 0.82rem;
         }
-        .goal-actions input:focus { border-color: var(--accent); }
+
+        /* GOAL COLORS */
+        .goal-purple { background: linear-gradient(135deg, var(--purple-glow), transparent); border-color: rgba(139, 92, 246, 0.06); }
+        .goal-purple:hover { border-color: rgba(139, 92, 246, 0.15); }
+        .goal-purple .progress-bar { background: rgba(139, 92, 246, 0.08); }
+        .goal-purple .progress-fill { background: linear-gradient(90deg, var(--purple), #a78bfa); }
+        .goal-purple .goal-pct { color: #a78bfa; }
+        .goal-purple .goal-amounts span { color: #a78bfa; }
+
+        .goal-pink { background: linear-gradient(135deg, rgba(236, 72, 153, 0.06), transparent); border-color: rgba(236, 72, 153, 0.06); }
+        .goal-pink:hover { border-color: rgba(236, 72, 153, 0.15); }
+        .goal-pink .progress-bar { background: rgba(236, 72, 153, 0.08); }
+        .goal-pink .progress-fill { background: linear-gradient(90deg, var(--pink), #f472b6); }
+        .goal-pink .goal-pct { color: #f472b6; }
+        .goal-pink .goal-amounts span { color: #f472b6; }
+
+        .goal-green { background: linear-gradient(135deg, rgba(16, 185, 129, 0.06), transparent); border-color: rgba(16, 185, 129, 0.06); }
+        .goal-green:hover { border-color: rgba(16, 185, 129, 0.15); }
+        .goal-green .progress-bar { background: rgba(16, 185, 129, 0.08); }
+        .goal-green .progress-fill { background: linear-gradient(90deg, var(--green), #34d399); }
+        .goal-green .goal-pct { color: #34d399; }
+        .goal-green .goal-amounts span { color: #34d399; }
 
         /* ADD GOAL FORM */
         .add-goal-form {
             display: none;
             gap: 10px;
-            margin-top: 16px;
-            padding-top: 16px;
+            margin-top: 18px;
+            padding-top: 18px;
             border-top: 1px solid var(--card-border);
+            flex-wrap: wrap;
         }
-        .add-goal-form.show { display: flex; flex-wrap: wrap; }
-        .add-goal-form input {
-            padding: 10px 14px;
-            background: var(--bg);
-            border: 1px solid var(--card-border);
-            border-radius: 8px;
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
-            outline: none;
+        .add-goal-form.show { display: flex; }
+        .add-goal-form input, .add-goal-form select { font-size: 0.85rem; }
+
+        /* DAILY TASKS */
+        .daily-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .add-goal-form input:focus { border-color: var(--accent); }
+        .daily-date-tag {
+            font-size: 0.7rem;
+            padding: 4px 12px;
+            background: var(--blue-glow);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            border-radius: 20px;
+            color: var(--blue-light);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .daily-progress {
+            margin: 16px 0;
+        }
+        .daily-progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            margin-bottom: 6px;
+        }
+        .daily-progress-text .done-count { color: var(--blue-light); font-weight: 600; }
+        .daily-progress-text .pct { color: var(--text-dim); }
+        .daily-bar {
+            height: 6px;
+            background: rgba(59, 130, 246, 0.08);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .daily-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--blue), var(--cyan));
+            border-radius: 6px;
+            transition: width 0.4s ease;
+        }
+        .daily-input-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+        }
+        .daily-input-row input { flex: 1; }
 
         /* TASKS */
         .task-input-row {
             display: flex;
             gap: 10px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
-        .task-input-row input {
-            flex: 1;
-            padding: 12px 16px;
-            background: var(--bg);
-            border: 1px solid var(--card-border);
-            border-radius: 10px;
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            outline: none;
-        }
-        .task-input-row input:focus { border-color: var(--accent2); }
-
+        .task-input-row input { flex: 1; }
         .task-list { list-style: none; }
         .task-item {
             display: flex;
             align-items: center;
             gap: 12px;
             padding: 12px 14px;
-            border-bottom: 1px solid var(--card-border);
-            transition: opacity 0.3s;
+            border-radius: 10px;
+            margin-bottom: 4px;
+            transition: all 0.2s;
         }
-        .task-item:last-child { border-bottom: none; }
-        .task-item.done { opacity: 0.4; }
+        .task-item:hover { background: rgba(59, 130, 246, 0.04); }
+        .task-item.done { opacity: 0.35; }
         .task-item.done .task-text { text-decoration: line-through; }
 
         .task-check {
             width: 22px;
             height: 22px;
-            border-radius: 6px;
-            border: 2px solid var(--card-border);
+            border-radius: 7px;
+            border: 2px solid rgba(59, 130, 246, 0.2);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -363,31 +526,31 @@
             flex-shrink: 0;
             background: transparent;
             color: transparent;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
+            font-weight: 900;
         }
+        .task-check:hover { border-color: var(--blue); }
         .task-item.done .task-check {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: #000;
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            border-color: var(--blue);
+            color: #fff;
         }
-        .task-text {
-            flex: 1;
-            font-size: 0.9rem;
-        }
+        .task-text { flex: 1; font-size: 0.9rem; }
         .task-priority {
-            padding: 3px 8px;
-            border-radius: 5px;
-            font-size: 0.65rem;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.63rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.2px;
+            flex-shrink: 0;
         }
-        .task-priority.high { background: rgba(239, 68, 68, 0.15); color: var(--red); }
-        .task-priority.med { background: rgba(245, 158, 11, 0.15); color: var(--orange); }
-        .task-priority.low { background: rgba(99, 102, 241, 0.15); color: var(--accent2); }
+        .task-priority.high { background: rgba(244, 63, 94, 0.12); color: var(--red); }
+        .task-priority.med { background: rgba(245, 158, 11, 0.12); color: var(--orange); }
+        .task-priority.low { background: rgba(139, 92, 246, 0.12); color: var(--purple); }
         .task-delete {
             cursor: pointer;
-            color: var(--text-dim);
+            color: var(--text-muted);
             opacity: 0;
             transition: opacity 0.2s;
             background: none;
@@ -398,67 +561,56 @@
         .task-item:hover .task-delete { opacity: 1; }
         .task-filters {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             margin-bottom: 12px;
         }
         .task-filter {
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-size: 0.75rem;
+            padding: 5px 14px;
+            border-radius: 8px;
+            font-size: 0.73rem;
             cursor: pointer;
             background: transparent;
-            border: 1px solid var(--card-border);
+            border: 1px solid rgba(59, 130, 246, 0.08);
             color: var(--text-dim);
             font-family: 'Inter', sans-serif;
             font-weight: 500;
             transition: all 0.2s;
         }
         .task-filter.active {
-            background: var(--accent2-glow);
-            border-color: var(--accent2);
-            color: var(--accent2);
+            background: var(--blue-glow);
+            border-color: rgba(59, 130, 246, 0.2);
+            color: var(--blue-light);
         }
+        .task-filter:hover:not(.active) { border-color: rgba(59, 130, 246, 0.15); }
 
-        /* SOURCE COLORS */
-        .src-youtube { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-        .src-trading { background: rgba(16, 185, 129, 0.15); color: #10b981; }
-        .src-creator { background: rgba(236, 72, 153, 0.15); color: #ec4899; }
-        .src-freelance { background: rgba(99, 102, 241, 0.15); color: #6366f1; }
-        .src-mowing { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
-        .src-other { background: rgba(113, 113, 122, 0.15); color: #a1a1aa; }
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 28px 20px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .empty-state .empty-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            opacity: 0.5;
+        }
 
         /* SCROLLBAR */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.15); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.25); }
 
-        /* GOAL COLORS */
-        .goal-purple .progress-fill {
-            background: linear-gradient(90deg, var(--accent2), #818cf8);
-        }
-        .goal-purple .progress-bar {
-            background: rgba(99, 102, 241, 0.1);
-        }
-        .goal-pink .progress-fill {
-            background: linear-gradient(90deg, var(--pink), #f472b6);
-        }
-        .goal-pink .progress-bar {
-            background: rgba(236, 72, 153, 0.1);
-        }
-
-        /* QUOTE */
-        .quote-bar {
-            max-width: 1200px;
-            margin: 0 auto 20px;
-            text-align: center;
-            padding: 14px 24px;
-            background: var(--card);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            font-style: italic;
-            color: var(--text-dim);
-            font-size: 0.85rem;
-            font-weight: 400;
+        /* SECTION DIVIDER */
+        .section-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 8px 0 4px;
+            grid-column: 1 / -1;
         }
     </style>
 </head>
@@ -467,7 +619,9 @@
     <div class="header">
         <h1>LOCK IN</h1>
         <div class="date" id="currentDate"></div>
-        <div class="streak">🔥 <span id="streakCount">0</span> day streak</div>
+        <div class="streak-row">
+            <div class="streak">🔥 <span id="streakCount">0</span> day streak</div>
+        </div>
     </div>
 
     <div class="quote-bar" id="quoteBar"></div>
@@ -500,7 +654,7 @@
             </div>
             <div class="log-row">
                 <input type="number" id="incomeAmount" placeholder="Amount ($)" step="0.01" min="0">
-                <input type="text" id="incomeNote" placeholder="What was it for?">
+                <input type="text" id="incomeNote" placeholder="What for?" onkeydown="if(event.key==='Enter')logIncome()">
                 <select id="incomeSource">
                     <option value="trading">Trading</option>
                     <option value="youtube">YouTube</option>
@@ -514,40 +668,63 @@
             <div class="log-entries" id="logEntries"></div>
         </div>
 
+        <!-- DAILY TASKS -->
+        <div class="card">
+            <div class="card-header">
+                <div class="daily-header" style="width:100%;display:flex;justify-content:space-between;align-items:center;">
+                    <div class="card-title">📋 Daily Tasks</div>
+                    <div class="daily-date-tag" id="dailyDateTag"></div>
+                </div>
+            </div>
+            <div class="daily-progress">
+                <div class="daily-progress-text">
+                    <span class="done-count" id="dailyDoneCount">0 / 0 done</span>
+                    <span class="pct" id="dailyPct">0%</span>
+                </div>
+                <div class="daily-bar"><div class="daily-bar-fill" id="dailyBarFill" style="width: 0%"></div></div>
+            </div>
+            <ul class="task-list" id="dailyTaskList"></ul>
+            <div class="daily-input-row">
+                <input type="text" id="dailyTaskInput" placeholder="Add today's task..." onkeydown="if(event.key==='Enter')addDailyTask()">
+                <button onclick="addDailyTask()">+ Add</button>
+            </div>
+        </div>
+
         <!-- GOALS -->
         <div class="card">
             <div class="card-header">
                 <div class="card-title">🎯 Goals</div>
-                <button class="small secondary" onclick="toggleAddGoal()">+ Add Goal</button>
+                <button class="small secondary" onclick="toggleAddGoal()">+ New Goal</button>
             </div>
             <div id="goalsContainer"></div>
             <div class="add-goal-form" id="addGoalForm">
-                <input type="text" id="newGoalEmoji" placeholder="Emoji" style="width: 60px;">
-                <input type="text" id="newGoalName" placeholder="Goal name" style="flex: 1; min-width: 140px;">
-                <input type="number" id="newGoalTarget" placeholder="Target ($)" style="width: 130px;">
-                <select id="newGoalColor" style="padding: 10px; background: var(--bg); border: 1px solid var(--card-border); border-radius: 8px; color: var(--text); font-family: 'Inter', sans-serif;">
-                    <option value="green">Green</option>
+                <input type="text" id="newGoalEmoji" placeholder="🎯" style="width: 56px; text-align: center;">
+                <input type="text" id="newGoalName" placeholder="Goal name" style="flex: 1; min-width: 120px;">
+                <input type="number" id="newGoalTarget" placeholder="Target $" style="width: 110px;">
+                <select id="newGoalColor">
+                    <option value="blue">Blue</option>
                     <option value="purple">Purple</option>
                     <option value="pink">Pink</option>
+                    <option value="green">Green</option>
                 </select>
                 <button onclick="addGoal()">Create</button>
             </div>
         </div>
 
         <!-- TASKS -->
-        <div class="card">
+        <div class="card full">
             <div class="card-header">
                 <div class="card-title">✅ Tasks</div>
                 <button class="small secondary" onclick="clearDoneTasks()">Clear Done</button>
             </div>
             <div class="task-input-row">
                 <input type="text" id="taskInput" placeholder="What needs to get done?" onkeydown="if(event.key==='Enter')addTask()">
-                <select id="taskPriority" style="padding: 12px; background: var(--bg); border: 1px solid var(--card-border); border-radius: 10px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 0.85rem; width: 100px;">
+                <select id="taskPriority" style="width: 100px;">
                     <option value="med">Med</option>
                     <option value="high">High</option>
                     <option value="low">Low</option>
                 </select>
-                <button onclick="addTask()" style="background: var(--accent2);">+ Add</button>
+                <button class="purple-btn" onclick="addTask()">+ Add</button>
             </div>
             <div class="task-filters">
                 <button class="task-filter active" data-filter="all" onclick="filterTasks('all', this)">All</button>
@@ -560,21 +737,32 @@
     </div>
 
     <script>
-        // ============ DATA LAYER ============
+        // ============ DATA ============
         function getData(key, fallback) {
             try { return JSON.parse(localStorage.getItem(key)) || fallback; }
             catch { return fallback; }
         }
         function setData(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
 
-        // ============ DATE HELPERS ============
+        // ============ DATE ============
         function todayStr() { return new Date().toISOString().split('T')[0]; }
         function getWeekStart() {
-            const d = new Date(); d.setDate(d.getDate() - d.getDay() + 1);
+            const d = new Date();
+            const day = d.getDay();
+            const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+            d.setDate(diff);
             return d.toISOString().split('T')[0];
         }
         function getMonthStart() {
-            const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;
+            const d = new Date();
+            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;
+        }
+        function formatDate(dateStr) {
+            if (dateStr === todayStr()) return 'Today';
+            const y = new Date(); y.setDate(y.getDate()-1);
+            if (dateStr === y.toISOString().split('T')[0]) return 'Yesterday';
+            const d = new Date(dateStr + 'T12:00:00');
+            return d.toLocaleDateString('en-NZ', { day: 'numeric', month: 'short' });
         }
 
         // ============ QUOTES ============
@@ -599,20 +787,14 @@
         // ============ STREAK ============
         function updateStreak() {
             const logs = getData('income_logs', []);
-            const today = todayStr();
             let streak = 0;
             let checkDate = new Date();
-
-            // Check if today has entries
-            const hasToday = logs.some(l => l.date === today);
+            const hasToday = logs.some(l => l.date === todayStr());
             if (!hasToday) checkDate.setDate(checkDate.getDate() - 1);
-
             while (true) {
                 const ds = checkDate.toISOString().split('T')[0];
-                if (logs.some(l => l.date === ds)) {
-                    streak++;
-                    checkDate.setDate(checkDate.getDate() - 1);
-                } else break;
+                if (logs.some(l => l.date === ds)) { streak++; checkDate.setDate(checkDate.getDate() - 1); }
+                else break;
             }
             document.getElementById('streakCount').textContent = streak;
         }
@@ -623,23 +805,14 @@
             const note = document.getElementById('incomeNote').value.trim();
             const source = document.getElementById('incomeSource').value;
             if (!amount || amount <= 0) return;
-
             const logs = getData('income_logs', []);
-            logs.unshift({
-                id: Date.now(),
-                amount,
-                note: note || source,
-                source,
-                date: todayStr(),
-                timestamp: new Date().toISOString()
-            });
+            logs.unshift({ id: Date.now(), amount, note: note || source, source, date: todayStr(), timestamp: new Date().toISOString() });
             setData('income_logs', logs);
             document.getElementById('incomeAmount').value = '';
             document.getElementById('incomeNote').value = '';
             renderIncome();
             updateStreak();
         }
-
         function deleteLog(id) {
             let logs = getData('income_logs', []);
             logs = logs.filter(l => l.id !== id);
@@ -647,64 +820,51 @@
             renderIncome();
             updateStreak();
         }
-
         function clearIncome() {
             if (!confirm('Clear all income logs? This cannot be undone.')) return;
             setData('income_logs', []);
             renderIncome();
             updateStreak();
         }
-
         function renderIncome() {
             const logs = getData('income_logs', []);
-            const today = todayStr();
-            const weekStart = getWeekStart();
-            const monthStart = getMonthStart();
-
-            const todaySum = logs.filter(l => l.date === today).reduce((s, l) => s + l.amount, 0);
-            const weekSum = logs.filter(l => l.date >= weekStart).reduce((s, l) => s + l.amount, 0);
-            const monthSum = logs.filter(l => l.date >= monthStart).reduce((s, l) => s + l.amount, 0);
-            const allSum = logs.reduce((s, l) => s + l.amount, 0);
-
-            document.getElementById('todayTotal').textContent = '$' + todaySum.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 2});
-            document.getElementById('weekTotal').textContent = '$' + weekSum.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 2});
-            document.getElementById('monthTotal').textContent = '$' + monthSum.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 2});
-            document.getElementById('allTotal').textContent = '$' + allSum.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 2});
-
+            const today = todayStr(), weekStart = getWeekStart(), monthStart = getMonthStart();
+            const fmt = n => '$' + n.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 2});
+            document.getElementById('todayTotal').textContent = fmt(logs.filter(l=>l.date===today).reduce((s,l)=>s+l.amount,0));
+            document.getElementById('weekTotal').textContent = fmt(logs.filter(l=>l.date>=weekStart).reduce((s,l)=>s+l.amount,0));
+            document.getElementById('monthTotal').textContent = fmt(logs.filter(l=>l.date>=monthStart).reduce((s,l)=>s+l.amount,0));
+            document.getElementById('allTotal').textContent = fmt(logs.reduce((s,l)=>s+l.amount,0));
             const container = document.getElementById('logEntries');
+            if (logs.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">💸</div>No income logged yet. Start tracking!</div>';
+                return;
+            }
             container.innerHTML = logs.slice(0, 50).map(l => `
                 <div class="log-entry">
                     <span class="source-tag src-${l.source}">${l.source}</span>
-                    <span class="task-text" style="margin-left: 12px; color: var(--text-dim); font-size: 0.8rem;">${l.note}</span>
+                    <span class="log-note">${l.note}</span>
                     <span class="log-date">${formatDate(l.date)}</span>
-                    <span class="amount">+$${l.amount.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 2})}</span>
+                    <span class="amount">+${fmt(l.amount)}</span>
                     <button class="delete-log" onclick="deleteLog(${l.id})">✕</button>
                 </div>
             `).join('');
         }
 
-        function formatDate(dateStr) {
-            const d = new Date(dateStr + 'T12:00:00');
-            const today = new Date();
-            if (dateStr === todayStr()) return 'Today';
-            const yesterday = new Date(today);
-            yesterday.setDate(yesterday.getDate() - 1);
-            if (dateStr === yesterday.toISOString().split('T')[0]) return 'Yesterday';
-            return d.toLocaleDateString('en-NZ', { day: 'numeric', month: 'short' });
-        }
-
         // ============ GOALS ============
         const defaultGoals = [
-            { id: 1, emoji: '🏎️', name: 'BMW G82 M4', target: 120000, current: 0, color: 'green' },
+            { id: 1, emoji: '🏎️', name: 'BMW G82 M4', target: 120000, current: 0, color: 'blue' },
             { id: 2, emoji: '❤️', name: "Mum's Credit Card Debt", target: 10000, current: 0, color: 'pink' },
         ];
-
         function renderGoals() {
             const goals = getData('goals', defaultGoals);
             const container = document.getElementById('goalsContainer');
+            if (goals.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">🎯</div>No goals yet. Set your first target!</div>';
+                return;
+            }
             container.innerHTML = goals.map(g => {
                 const pct = Math.min((g.current / g.target) * 100, 100);
-                const colorClass = g.color === 'purple' ? 'goal-purple' : g.color === 'pink' ? 'goal-pink' : '';
+                const colorClass = g.color !== 'blue' ? `goal-${g.color}` : '';
                 return `
                     <div class="goal ${colorClass}">
                         <div class="goal-top">
@@ -712,19 +872,18 @@
                             <div class="goal-amounts"><span>$${g.current.toLocaleString()}</span> / $${g.target.toLocaleString()}</div>
                         </div>
                         <div class="progress-bar"><div class="progress-fill" style="width: ${pct}%"></div></div>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="goal-bottom">
                             <div class="goal-pct">${pct.toFixed(1)}%</div>
                             <div class="goal-actions">
-                                <input type="number" id="goalAdd_${g.id}" placeholder="$" step="0.01">
+                                <input type="number" id="goalAdd_${g.id}" placeholder="$" step="0.01" onkeydown="if(event.key==='Enter')addToGoal(${g.id})">
                                 <button class="small" onclick="addToGoal(${g.id})">+ Add</button>
-                                <button class="small danger" onclick="removeGoal(${g.id})" style="padding: 6px 8px;">✕</button>
+                                <button class="small danger" onclick="removeGoal(${g.id})">✕</button>
                             </div>
                         </div>
                     </div>
                 `;
             }).join('');
         }
-
         function addToGoal(id) {
             const input = document.getElementById('goalAdd_' + id);
             const amount = parseFloat(input.value);
@@ -734,7 +893,6 @@
             if (goal) { goal.current += amount; setData('goals', goals); }
             renderGoals();
         }
-
         function removeGoal(id) {
             if (!confirm('Remove this goal?')) return;
             let goals = getData('goals', defaultGoals);
@@ -742,11 +900,7 @@
             setData('goals', goals);
             renderGoals();
         }
-
-        function toggleAddGoal() {
-            document.getElementById('addGoalForm').classList.toggle('show');
-        }
-
+        function toggleAddGoal() { document.getElementById('addGoalForm').classList.toggle('show'); }
         function addGoal() {
             const emoji = document.getElementById('newGoalEmoji').value || '🎯';
             const name = document.getElementById('newGoalName').value.trim();
@@ -763,9 +917,62 @@
             renderGoals();
         }
 
+        // ============ DAILY TASKS ============
+        function getDailyKey() { return 'daily_tasks_' + todayStr(); }
+        function getDailyTasks() { return getData(getDailyKey(), []); }
+        function setDailyTasks(tasks) { setData(getDailyKey(), tasks); }
+
+        function addDailyTask() {
+            const input = document.getElementById('dailyTaskInput');
+            const text = input.value.trim();
+            if (!text) return;
+            const tasks = getDailyTasks();
+            tasks.push({ id: Date.now(), text, done: false });
+            setDailyTasks(tasks);
+            input.value = '';
+            renderDailyTasks();
+        }
+        function toggleDailyTask(id) {
+            const tasks = getDailyTasks();
+            const t = tasks.find(t => t.id === id);
+            if (t) { t.done = !t.done; setDailyTasks(tasks); }
+            renderDailyTasks();
+        }
+        function deleteDailyTask(id) {
+            let tasks = getDailyTasks();
+            tasks = tasks.filter(t => t.id !== id);
+            setDailyTasks(tasks);
+            renderDailyTasks();
+        }
+        function renderDailyTasks() {
+            const tasks = getDailyTasks();
+            const total = tasks.length;
+            const done = tasks.filter(t => t.done).length;
+            const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+            document.getElementById('dailyDoneCount').textContent = `${done} / ${total} done`;
+            document.getElementById('dailyPct').textContent = pct + '%';
+            document.getElementById('dailyBarFill').style.width = pct + '%';
+
+            const now = new Date();
+            document.getElementById('dailyDateTag').textContent = now.toLocaleDateString('en-NZ', { weekday: 'short', day: 'numeric', month: 'short' });
+
+            const list = document.getElementById('dailyTaskList');
+            if (tasks.length === 0) {
+                list.innerHTML = '<div class="empty-state"><div class="empty-icon">☀️</div>Plan your day. What needs doing?</div>';
+                return;
+            }
+            list.innerHTML = tasks.map(t => `
+                <li class="task-item ${t.done ? 'done' : ''}">
+                    <div class="task-check" onclick="toggleDailyTask(${t.id})">${t.done ? '✓' : ''}</div>
+                    <span class="task-text">${t.text}</span>
+                    <button class="task-delete" onclick="deleteDailyTask(${t.id})">✕</button>
+                </li>
+            `).join('');
+        }
+
         // ============ TASKS ============
         let currentFilter = 'all';
-
         function addTask() {
             const input = document.getElementById('taskInput');
             const text = input.value.trim();
@@ -777,41 +984,40 @@
             input.value = '';
             renderTasks();
         }
-
         function toggleTask(id) {
             const tasks = getData('tasks', []);
-            const task = tasks.find(t => t.id === id);
-            if (task) { task.done = !task.done; setData('tasks', tasks); }
+            const t = tasks.find(t => t.id === id);
+            if (t) { t.done = !t.done; setData('tasks', tasks); }
             renderTasks();
         }
-
         function deleteTask(id) {
             let tasks = getData('tasks', []);
             tasks = tasks.filter(t => t.id !== id);
             setData('tasks', tasks);
             renderTasks();
         }
-
         function clearDoneTasks() {
             let tasks = getData('tasks', []);
             tasks = tasks.filter(t => !t.done);
             setData('tasks', tasks);
             renderTasks();
         }
-
         function filterTasks(filter, btn) {
             currentFilter = filter;
             document.querySelectorAll('.task-filter').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             renderTasks();
         }
-
         function renderTasks() {
             let tasks = getData('tasks', []);
             if (currentFilter === 'active') tasks = tasks.filter(t => !t.done);
             else if (currentFilter === 'done') tasks = tasks.filter(t => t.done);
-
-            document.getElementById('taskList').innerHTML = tasks.map(t => `
+            const list = document.getElementById('taskList');
+            if (tasks.length === 0) {
+                list.innerHTML = '<div class="empty-state"><div class="empty-icon">✨</div>' + (currentFilter === 'done' ? 'No completed tasks' : 'All clear. Add something!') + '</div>';
+                return;
+            }
+            list.innerHTML = tasks.map(t => `
                 <li class="task-item ${t.done ? 'done' : ''}">
                     <div class="task-check" onclick="toggleTask(${t.id})">${t.done ? '✓' : ''}</div>
                     <span class="task-text">${t.text}</span>
@@ -823,27 +1029,17 @@
 
         // ============ INIT ============
         function init() {
-            // Date
             const now = new Date();
-            const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-NZ', opts);
-
-            // Quote
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-NZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
             const dayIndex = Math.floor(now.getTime() / 86400000) % quotes.length;
             document.getElementById('quoteBar').textContent = `"${quotes[dayIndex]}"`;
-
-            // Render
+            if (!localStorage.getItem('goals')) setData('goals', defaultGoals);
             renderIncome();
             renderGoals();
+            renderDailyTasks();
             renderTasks();
             updateStreak();
-
-            // Initialize default goals if first visit
-            if (!localStorage.getItem('goals')) {
-                setData('goals', defaultGoals);
-            }
         }
-
         init();
     </script>
 </body>
