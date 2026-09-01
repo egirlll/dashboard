@@ -396,11 +396,10 @@
         .log-entry:hover .delete-log { opacity: 1; }
 
         /* SOURCE COLORS */
-        .src-youtube { background: rgba(239, 68, 68, 0.12); color: #f87171; }
-        .src-trading { background: rgba(59, 130, 246, 0.12); color: #60a5fa; }
-        .src-creator { background: rgba(236, 72, 153, 0.12); color: #f472b6; }
-        .src-freelance { background: rgba(139, 92, 246, 0.12); color: #a78bfa; }
-        .src-mowing { background: rgba(16, 185, 129, 0.12); color: #34d399; }
+        .src-flipgg { background: rgba(16, 185, 129, 0.12); color: #34d399; }
+        .src-packdraw { background: rgba(245, 158, 11, 0.12); color: #fbbf24; }
+        .src-twitter { background: rgba(59, 130, 246, 0.12); color: #60a5fa; }
+        .src-memecoins { background: rgba(139, 92, 246, 0.12); color: #a78bfa; }
         .src-other { background: rgba(100, 116, 139, 0.12); color: #94a3b8; }
 
         /* GOALS */
@@ -751,12 +750,11 @@
                 <div class="form-inner">
                     <input type="number" id="incomeAmount" placeholder="Amount ($)" step="0.01" min="0" style="max-width:130px;" onkeydown="if(event.key==='Enter')logIncome()">
                     <input type="text" id="incomeNote" placeholder="What for?" style="flex:1;" onkeydown="if(event.key==='Enter')logIncome()">
-                    <select id="incomeSource" style="max-width:160px;">
-                        <option value="trading">Trading</option>
-                        <option value="youtube">YouTube</option>
-                        <option value="creator">Creator Sites</option>
-                        <option value="mowing">Mowing</option>
-                        <option value="freelance">Freelance</option>
+                    <select id="incomeSource" style="max-width:170px;">
+                        <option value="flipgg">Flip.gg Dailys</option>
+                        <option value="packdraw">Packdraw Dailys</option>
+                        <option value="twitter">Twitter</option>
+                        <option value="memecoins">Memecoins</option>
                         <option value="other">Other</option>
                     </select>
                     <button onclick="logIncome()">Log</button>
