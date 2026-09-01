@@ -13,7 +13,6 @@
             --bg: #06080d;
             --bg2: #0b0f18;
             --card: rgba(14, 19, 30, 0.85);
-            --card-hover: rgba(18, 24, 38, 0.95);
             --card-border: rgba(56, 120, 255, 0.08);
             --card-border-hover: rgba(56, 120, 255, 0.18);
             --text: #e2e8f0;
@@ -78,7 +77,6 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-transform: uppercase;
-            text-shadow: 0 0 60px rgba(59, 130, 246, 0.3);
         }
         .header .date {
             color: var(--text-dim);
@@ -142,6 +140,8 @@
             .header h1 { font-size: 2.2rem; letter-spacing: 5px; }
             body { padding: 12px; }
             .money-stats { grid-template-columns: repeat(2, 1fr) !important; }
+            .log-row { flex-wrap: wrap; }
+            .log-row input[type="number"], .log-row select { max-width: none; }
         }
 
         /* CARDS */
@@ -176,7 +176,6 @@
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 12px;
-            margin-bottom: 20px;
         }
         .stat-box {
             background: linear-gradient(135deg, var(--blue-glow2), rgba(34, 211, 238, 0.03));
@@ -224,11 +223,78 @@
         input::placeholder { color: var(--text-muted); }
         select option { background: var(--bg2); }
 
+        /* COLLAPSIBLE FORMS */
+        .collapse-form {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease, margin 0.3s ease;
+            opacity: 0;
+            margin-top: 0;
+        }
+        .collapse-form.open {
+            max-height: 200px;
+            opacity: 1;
+            margin-top: 16px;
+        }
+        .collapse-form .form-inner {
+            display: flex;
+            gap: 10px;
+            padding-top: 16px;
+            border-top: 1px solid var(--card-border);
+        }
+
+        /* + TOGGLE BUTTON */
+        .add-toggle {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: var(--blue-glow);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: var(--blue-light);
+            font-size: 1.1rem;
+            font-weight: 400;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s;
+            padding: 0;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        .add-toggle:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--blue);
+            transform: scale(1.05);
+            box-shadow: 0 0 16px rgba(59, 130, 246, 0.15);
+        }
+        .add-toggle.active {
+            background: var(--blue);
+            color: #fff;
+            border-color: var(--blue);
+            transform: rotate(45deg);
+        }
+
+        .add-toggle-purple {
+            background: var(--purple-glow);
+            border-color: rgba(139, 92, 246, 0.2);
+            color: #a78bfa;
+        }
+        .add-toggle-purple:hover {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: var(--purple);
+            box-shadow: 0 0 16px rgba(139, 92, 246, 0.15);
+        }
+        .add-toggle-purple.active {
+            background: var(--purple);
+            color: #fff;
+            border-color: var(--purple);
+        }
+
         /* LOG ROW */
         .log-row {
             display: flex;
             gap: 10px;
-            margin-top: 16px;
         }
         .log-row input { flex: 1; }
         .log-row input[type="number"] { max-width: 130px; }
@@ -339,7 +405,7 @@
 
         /* GOALS */
         .goal {
-            margin-bottom: 22px;
+            margin-bottom: 16px;
             padding: 18px;
             background: linear-gradient(135deg, var(--blue-glow2), transparent);
             border: 1px solid rgba(59, 130, 246, 0.06);
@@ -436,22 +502,27 @@
 
         /* ADD GOAL FORM */
         .add-goal-form {
-            display: none;
-            gap: 10px;
-            margin-top: 18px;
-            padding-top: 18px;
-            border-top: 1px solid var(--card-border);
-            flex-wrap: wrap;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease, margin 0.3s ease;
+            margin-top: 0;
         }
-        .add-goal-form.show { display: flex; }
-        .add-goal-form input, .add-goal-form select { font-size: 0.85rem; }
+        .add-goal-form.show {
+            max-height: 200px;
+            opacity: 1;
+            margin-top: 16px;
+        }
+        .add-goal-inner {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding-top: 16px;
+            border-top: 1px solid var(--card-border);
+        }
+        .add-goal-inner input, .add-goal-inner select { font-size: 0.85rem; }
 
         /* DAILY TASKS */
-        .daily-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
         .daily-date-tag {
             font-size: 0.7rem;
             padding: 4px 12px;
@@ -485,20 +556,8 @@
             border-radius: 6px;
             transition: width 0.4s ease;
         }
-        .daily-input-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 14px;
-        }
-        .daily-input-row input { flex: 1; }
 
         /* TASKS */
-        .task-input-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 14px;
-        }
-        .task-input-row input { flex: 1; }
         .task-list { list-style: none; }
         .task-item {
             display: flex;
@@ -602,15 +661,11 @@
         ::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.15); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.25); }
 
-        /* SECTION DIVIDER */
-        .section-label {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: var(--text-muted);
-            font-weight: 600;
-            padding: 8px 0 4px;
-            grid-column: 1 / -1;
+        /* HEADER ACTIONS */
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
         }
     </style>
 </head>
@@ -632,7 +687,10 @@
         <div class="card full">
             <div class="card-header">
                 <div class="card-title">💰 Money Tracker</div>
-                <button class="small secondary" onclick="clearIncome()">Clear All</button>
+                <div class="header-actions">
+                    <button class="small secondary" onclick="clearIncome()">Clear</button>
+                    <div class="add-toggle" id="toggleIncome" onclick="toggleForm('income')" title="Log income">+</div>
+                </div>
             </div>
             <div class="money-stats">
                 <div class="stat-box">
@@ -652,18 +710,20 @@
                     <div class="value" id="allTotal">$0</div>
                 </div>
             </div>
-            <div class="log-row">
-                <input type="number" id="incomeAmount" placeholder="Amount ($)" step="0.01" min="0">
-                <input type="text" id="incomeNote" placeholder="What for?" onkeydown="if(event.key==='Enter')logIncome()">
-                <select id="incomeSource">
-                    <option value="trading">Trading</option>
-                    <option value="youtube">YouTube</option>
-                    <option value="creator">Creator Sites</option>
-                    <option value="mowing">Mowing</option>
-                    <option value="freelance">Freelance</option>
-                    <option value="other">Other</option>
-                </select>
-                <button onclick="logIncome()">+ Log</button>
+            <div class="collapse-form" id="incomeForm">
+                <div class="form-inner">
+                    <input type="number" id="incomeAmount" placeholder="Amount ($)" step="0.01" min="0" style="max-width:130px;" onkeydown="if(event.key==='Enter')logIncome()">
+                    <input type="text" id="incomeNote" placeholder="What for?" style="flex:1;" onkeydown="if(event.key==='Enter')logIncome()">
+                    <select id="incomeSource" style="max-width:160px;">
+                        <option value="trading">Trading</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="creator">Creator Sites</option>
+                        <option value="mowing">Mowing</option>
+                        <option value="freelance">Freelance</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <button onclick="logIncome()">Log</button>
+                </div>
             </div>
             <div class="log-entries" id="logEntries"></div>
         </div>
@@ -671,10 +731,11 @@
         <!-- DAILY TASKS -->
         <div class="card">
             <div class="card-header">
-                <div class="daily-header" style="width:100%;display:flex;justify-content:space-between;align-items:center;">
+                <div style="display:flex;align-items:center;gap:12px;">
                     <div class="card-title">📋 Daily Tasks</div>
                     <div class="daily-date-tag" id="dailyDateTag"></div>
                 </div>
+                <div class="add-toggle" id="toggleDaily" onclick="toggleForm('daily')" title="Add daily task">+</div>
             </div>
             <div class="daily-progress">
                 <div class="daily-progress-text">
@@ -684,9 +745,11 @@
                 <div class="daily-bar"><div class="daily-bar-fill" id="dailyBarFill" style="width: 0%"></div></div>
             </div>
             <ul class="task-list" id="dailyTaskList"></ul>
-            <div class="daily-input-row">
-                <input type="text" id="dailyTaskInput" placeholder="Add today's task..." onkeydown="if(event.key==='Enter')addDailyTask()">
-                <button onclick="addDailyTask()">+ Add</button>
+            <div class="collapse-form" id="dailyForm">
+                <div class="form-inner">
+                    <input type="text" id="dailyTaskInput" placeholder="Add today's task..." style="flex:1;" onkeydown="if(event.key==='Enter'){addDailyTask();toggleForm('daily');}">
+                    <button onclick="addDailyTask()">Add</button>
+                </div>
             </div>
         </div>
 
@@ -694,20 +757,22 @@
         <div class="card">
             <div class="card-header">
                 <div class="card-title">🎯 Goals</div>
-                <button class="small secondary" onclick="toggleAddGoal()">+ New Goal</button>
+                <div class="add-toggle" id="toggleGoal" onclick="toggleAddGoal()" title="New goal">+</div>
             </div>
             <div id="goalsContainer"></div>
             <div class="add-goal-form" id="addGoalForm">
-                <input type="text" id="newGoalEmoji" placeholder="🎯" style="width: 56px; text-align: center;">
-                <input type="text" id="newGoalName" placeholder="Goal name" style="flex: 1; min-width: 120px;">
-                <input type="number" id="newGoalTarget" placeholder="Target $" style="width: 110px;">
-                <select id="newGoalColor">
-                    <option value="blue">Blue</option>
-                    <option value="purple">Purple</option>
-                    <option value="pink">Pink</option>
-                    <option value="green">Green</option>
-                </select>
-                <button onclick="addGoal()">Create</button>
+                <div class="add-goal-inner">
+                    <input type="text" id="newGoalEmoji" placeholder="🎯" style="width: 56px; text-align: center;">
+                    <input type="text" id="newGoalName" placeholder="Goal name" style="flex: 1; min-width: 120px;" onkeydown="if(event.key==='Enter')addGoal()">
+                    <input type="number" id="newGoalTarget" placeholder="Target $" style="width: 110px;" onkeydown="if(event.key==='Enter')addGoal()">
+                    <select id="newGoalColor">
+                        <option value="blue">Blue</option>
+                        <option value="purple">Purple</option>
+                        <option value="pink">Pink</option>
+                        <option value="green">Green</option>
+                    </select>
+                    <button onclick="addGoal()">Create</button>
+                </div>
             </div>
         </div>
 
@@ -715,16 +780,21 @@
         <div class="card full">
             <div class="card-header">
                 <div class="card-title">✅ Tasks</div>
-                <button class="small secondary" onclick="clearDoneTasks()">Clear Done</button>
+                <div class="header-actions">
+                    <button class="small secondary" onclick="clearDoneTasks()">Clear Done</button>
+                    <div class="add-toggle add-toggle-purple" id="toggleTask" onclick="toggleForm('task')" title="Add task">+</div>
+                </div>
             </div>
-            <div class="task-input-row">
-                <input type="text" id="taskInput" placeholder="What needs to get done?" onkeydown="if(event.key==='Enter')addTask()">
-                <select id="taskPriority" style="width: 100px;">
-                    <option value="med">Med</option>
-                    <option value="high">High</option>
-                    <option value="low">Low</option>
-                </select>
-                <button class="purple-btn" onclick="addTask()">+ Add</button>
+            <div class="collapse-form" id="taskForm">
+                <div class="form-inner">
+                    <input type="text" id="taskInput" placeholder="What needs to get done?" style="flex:1;" onkeydown="if(event.key==='Enter')addTask()">
+                    <select id="taskPriority" style="width: 100px;">
+                        <option value="med">Med</option>
+                        <option value="high">High</option>
+                        <option value="low">Low</option>
+                    </select>
+                    <button class="purple-btn" onclick="addTask()">Add</button>
+                </div>
             </div>
             <div class="task-filters">
                 <button class="task-filter active" data-filter="all" onclick="filterTasks('all', this)">All</button>
@@ -743,6 +813,31 @@
             catch { return fallback; }
         }
         function setData(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+
+        // ============ TOGGLE FORMS ============
+        function toggleForm(name) {
+            const form = document.getElementById(name + 'Form');
+            const toggle = document.getElementById('toggle' + name.charAt(0).toUpperCase() + name.slice(1));
+            const isOpen = form.classList.contains('open');
+            form.classList.toggle('open');
+            toggle.classList.toggle('active');
+            if (!isOpen) {
+                setTimeout(() => {
+                    const input = form.querySelector('input[type="text"], input[type="number"]');
+                    if (input) input.focus();
+                }, 200);
+            }
+        }
+
+        function toggleAddGoal() {
+            const form = document.getElementById('addGoalForm');
+            const toggle = document.getElementById('toggleGoal');
+            form.classList.toggle('show');
+            toggle.classList.toggle('active');
+            if (form.classList.contains('show')) {
+                setTimeout(() => document.getElementById('newGoalName').focus(), 200);
+            }
+        }
 
         // ============ DATE ============
         function todayStr() { return new Date().toISOString().split('T')[0]; }
@@ -812,6 +907,9 @@
             document.getElementById('incomeNote').value = '';
             renderIncome();
             updateStreak();
+            // Close the form after logging
+            const form = document.getElementById('incomeForm');
+            if (form.classList.contains('open')) toggleForm('income');
         }
         function deleteLog(id) {
             let logs = getData('income_logs', []);
@@ -836,7 +934,7 @@
             document.getElementById('allTotal').textContent = fmt(logs.reduce((s,l)=>s+l.amount,0));
             const container = document.getElementById('logEntries');
             if (logs.length === 0) {
-                container.innerHTML = '<div class="empty-state"><div class="empty-icon">💸</div>No income logged yet. Start tracking!</div>';
+                container.innerHTML = '';
                 return;
             }
             container.innerHTML = logs.slice(0, 50).map(l => `
@@ -859,7 +957,7 @@
             const goals = getData('goals', defaultGoals);
             const container = document.getElementById('goalsContainer');
             if (goals.length === 0) {
-                container.innerHTML = '<div class="empty-state"><div class="empty-icon">🎯</div>No goals yet. Set your first target!</div>';
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">🎯</div>No goals yet. Hit + to set your first target.</div>';
                 return;
             }
             container.innerHTML = goals.map(g => {
@@ -876,7 +974,7 @@
                             <div class="goal-pct">${pct.toFixed(1)}%</div>
                             <div class="goal-actions">
                                 <input type="number" id="goalAdd_${g.id}" placeholder="$" step="0.01" onkeydown="if(event.key==='Enter')addToGoal(${g.id})">
-                                <button class="small" onclick="addToGoal(${g.id})">+ Add</button>
+                                <button class="small" onclick="addToGoal(${g.id})">+</button>
                                 <button class="small danger" onclick="removeGoal(${g.id})">✕</button>
                             </div>
                         </div>
@@ -891,6 +989,7 @@
             const goals = getData('goals', defaultGoals);
             const goal = goals.find(g => g.id === id);
             if (goal) { goal.current += amount; setData('goals', goals); }
+            input.value = '';
             renderGoals();
         }
         function removeGoal(id) {
@@ -900,7 +999,6 @@
             setData('goals', goals);
             renderGoals();
         }
-        function toggleAddGoal() { document.getElementById('addGoalForm').classList.toggle('show'); }
         function addGoal() {
             const emoji = document.getElementById('newGoalEmoji').value || '🎯';
             const name = document.getElementById('newGoalName').value.trim();
@@ -913,7 +1011,7 @@
             document.getElementById('newGoalName').value = '';
             document.getElementById('newGoalTarget').value = '';
             document.getElementById('newGoalEmoji').value = '';
-            document.getElementById('addGoalForm').classList.remove('show');
+            toggleAddGoal();
             renderGoals();
         }
 
@@ -959,7 +1057,7 @@
 
             const list = document.getElementById('dailyTaskList');
             if (tasks.length === 0) {
-                list.innerHTML = '<div class="empty-state"><div class="empty-icon">☀️</div>Plan your day. What needs doing?</div>';
+                list.innerHTML = '<div class="empty-state"><div class="empty-icon">☀️</div>Hit + to plan your day.</div>';
                 return;
             }
             list.innerHTML = tasks.map(t => `
@@ -983,6 +1081,9 @@
             setData('tasks', tasks);
             input.value = '';
             renderTasks();
+            // Close the form after adding
+            const form = document.getElementById('taskForm');
+            if (form.classList.contains('open')) toggleForm('task');
         }
         function toggleTask(id) {
             const tasks = getData('tasks', []);
@@ -1014,7 +1115,7 @@
             else if (currentFilter === 'done') tasks = tasks.filter(t => t.done);
             const list = document.getElementById('taskList');
             if (tasks.length === 0) {
-                list.innerHTML = '<div class="empty-state"><div class="empty-icon">✨</div>' + (currentFilter === 'done' ? 'No completed tasks' : 'All clear. Add something!') + '</div>';
+                list.innerHTML = '<div class="empty-state"><div class="empty-icon">✨</div>' + (currentFilter === 'done' ? 'No completed tasks' : 'All clear. Hit + to add something.') + '</div>';
                 return;
             }
             list.innerHTML = tasks.map(t => `
