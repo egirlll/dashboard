@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOCK IN</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0a0f;
+            --card: #12121a;
+            --card-border: #1e1e2e;
+            --text: #e4e4e7;
+            --text-dim: #71717a;
+            --accent: #10b981;
+            --accent-glow: rgba(16, 185, 129, 0.15);
+            --accent2: #6366f1;
+            --accent2-glow: rgba(99, 102, 241, 0.15);
+            --red: #ef4444;
+            --orange: #f59e0b;
+            --pink: #ec4899;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* HEADER */
+        .header {
+            text-align: center;
+            padding: 30px 0 40px;
+        }
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 900;
+            letter-spacing: 6px;
+            background: linear-gradient(135deg, var(--accent), #34d399, var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+        .header .date {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin-top: 8px;
+            font-weight: 400;
+        }
+        .header .streak {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 14px;
+            padding: 6px 18px;
+            background: var(--accent-glow);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* GRID */
+        .grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .grid .full { grid-column: 1 / -1; }
+
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+            .header h1 { font-size: 2rem; letter-spacing: 4px; }
+            body { padding: 12px; }
+        }
+
+        /* CARDS */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 24px;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .card-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            font-weight: 600;
+        }
+
+        /* MONEY STATS */
+        .money-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 768px) {
+            .money-stats { grid-template-columns: repeat(2, 1fr); }
+        }
+        .stat-box {
+            background: rgba(16, 185, 129, 0.06);
+            border: 1px solid rgba(16, 185, 129, 0.12);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+        .stat-box .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-dim);
+            margin-bottom: 6px;
+        }
+        .stat-box .value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        /* LOG INCOME */
+        .log-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        .log-row input, .log-row select {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .log-row input:focus, .log-row select:focus {
+            border-color: var(--accent);
+        }
+        .log-row input[type="number"] { max-width: 140px; }
+        .log-row select { max-width: 180px; }
+
+        button {
+            padding: 12px 20px;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+        }
+        button:hover { opacity: 0.85; transform: translateY(-1px); }
+        button.secondary {
+            background: var(--card-border);
+            color: var(--text-dim);
+        }
+        button.small {
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            border-radius: 8px;
+        }
+        button.danger { background: var(--red); }
+
+        /* INCOME LOG TABLE */
+        .log-entries {
+            margin-top: 16px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--card-border);
+            font-size: 0.85rem;
+        }
+        .log-entry:last-child { border-bottom: none; }
+        .log-entry .source-tag {
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .log-entry .amount {
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .log-entry .log-date {
+            color: var(--text-dim);
+            font-size: 0.75rem;
+        }
+        .log-entry .delete-log {
+            cursor: pointer;
+            color: var(--text-dim);
+            opacity: 0;
+            transition: opacity 0.2s;
+            background: none;
+            border: none;
+            padding: 2px 6px;
+            font-size: 0.8rem;
+        }
+        .log-entry:hover .delete-log { opacity: 1; }
+
+        /* GOALS */
+        .goal {
+            margin-bottom: 20px;
+        }
+        .goal:last-child { margin-bottom: 0; }
+        .goal-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .goal-name {
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .goal-amounts {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+        .goal-amounts span {
+            color: var(--accent);
+            font-weight: 700;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--accent), #34d399);
+            transition: width 0.5s ease;
+            position: relative;
+        }
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; bottom: 0;
+            width: 30px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2));
+            border-radius: 0 10px 10px 0;
+        }
+        .goal-pct {
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .goal-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .goal-actions input {
+            width: 120px;
+            padding: 8px 12px;
+            background: var(--bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            outline: none;
+        }
+        .goal-actions input:focus { border-color: var(--accent); }
+
+        /* ADD GOAL FORM */
+        .add-goal-form {
+            display: none;
+            gap: 10px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--card-border);
+        }
+        .add-goal-form.show { display: flex; flex-wrap: wrap; }
+        .add-goal-form input {
+            padding: 10px 14px;
+            background: var(--bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            outline: none;
+        }
+        .add-goal-form input:focus { border-color: var(--accent); }
+
+        /* TASKS */
+        .task-input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .task-input-row input {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .task-input-row input:focus { border-color: var(--accent2); }
+
+        .task-list { list-style: none; }
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--card-border);
+            transition: opacity 0.3s;
+        }
+        .task-item:last-child { border-bottom: none; }
+        .task-item.done { opacity: 0.4; }
+        .task-item.done .task-text { text-decoration: line-through; }
+
+        .task-check {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: 2px solid var(--card-border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            background: transparent;
+            color: transparent;
+            font-size: 0.75rem;
+        }
+        .task-item.done .task-check {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #000;
+        }
+        .task-text {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+        .task-priority {
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .task-priority.high { background: rgba(239, 68, 68, 0.15); color: var(--red); }
+        .task-priority.med { background: rgba(245, 158, 11, 0.15); color: var(--orange); }
+        .task-priority.low { background: rgba(99, 102, 241, 0.15); color: var(--accent2); }
+        .task-delete {
+            cursor: pointer;
+            color: var(--text-dim);
+            opacity: 0;
+            transition: opacity 0.2s;
+            background: none;
+            border: none;
+            font-size: 0.85rem;
+            padding: 4px 8px;
+        }
+        .task-item:hover .task-delete { opacity: 1; }
+        .task-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .task-filter {
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            background: transparent;
+            border: 1px solid var(--card-border);
+            color: var(--text-dim);
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .task-filter.active {
+            background: var(--accent2-glow);
+            border-color: var(--accent2);
+            color: var(--accent2);
+        }
+
+        /* SOURCE COLORS */
+        .src-youtube { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        .src-trading { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        .src-creator { background: rgba(236, 72, 153, 0.15); color: #ec4899; }
+        .src-freelance { background: rgba(99, 102, 241, 0.15); color: #6366f1; }
+        .src-mowing { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+        .src-other { background: rgba(113, 113, 122, 0.15); color: #a1a1aa; }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
+
+        /* GOAL COLORS */
+        .goal-purple .progress-fill {
+            background: linear-gradient(90deg, var(--accent2), #818cf8);
+        }
+        .goal-purple .progress-bar {
+            background: rgba(99, 102, 241, 0.1);
+        }
+        .goal-pink .progress-fill {
+            background: linear-gradient(90deg, var(--pink), #f472b6);
+        }
+        .goal-pink .progress-bar {
+            background: rgba(236, 72, 153, 0.1);
+        }
+
+        /* QUOTE */
+        .quote-bar {
+            max-width: 1200px;
+            margin: 0 auto 20px;
+            text-align: center;
+            padding: 14px 24px;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            font-style: italic;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            font-weight: 400;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>LOCK IN</h1>
+        <div class="date" id="currentDate"></div>
+        <div class="streak">🔥 <span id="streakCount">0</span> day streak</div>
+    </div>
+
+    <div class="quote-bar" id="quoteBar"></div>
+
+    <div class="grid">
+
+        <!-- DAILY MONEY -->
+        <div class="card full">
+            <div class="card-header">
+                <div class="card-title">💰 Money Tracker</div>
+                <button class="small secondary" onclick="clearIncome()">Clear All</button>
+            </div>
+            <div class="money-stats">
+                <div class="stat-box">
+                    <div class="label">Today</div>
+                    <div class="value" id="todayTotal">$0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">This Week</div>
+                    <div class="value" id="weekTotal">$0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">This Month</div>
+                    <div class="value" id="monthTotal">$0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">All Time</div>
+                    <div class="value" id="allTotal">$0</div>
+                </div>
+            </div>
+            <div class="log-row">
+                <input type="number" id="incomeAmount" placeholder="Amount ($)" step="0.01" min="0">
+                <input type="text" id="incomeNote" placeholder="What was it for?">
+                <select id="incomeSource">
+                    <option value="trading">Trading</option>
+                    <option value="youtube">YouTube</option>
+                    <option value="creator">Creator Sites</option>
+                    <option value="mowing">Mowing</option>
+                    <option value="freelance">Freelance</option>
+                    <option value="other">Other</option>
+                </select>
+                <button onclick="logIncome()">+ Log</button>
+            </div>
+            <div class="log-entries" id="logEntries"></div>
+        </div>
+
+        <!-- GOALS -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">🎯 Goals</div>
+                <button class="small secondary" onclick="toggleAddGoal()">+ Add Goal</button>
+            </div>
+            <div id="goalsContainer"></div>
+            <div class="add-goal-form" id="addGoalForm">
+                <input type="text" id="newGoalEmoji" placeholder="Emoji" style="width: 60px;">
+                <input type="text" id="newGoalName" placeholder="Goal name" style="flex: 1; min-width: 140px;">
+                <input type="number" id="newGoalTarget" placeholder="Target ($)" style="width: 130px;">
+                <select id="newGoalColor" style="padding: 10px; background: var(--bg); border: 1px solid var(--card-border); border-radius: 8px; color: var(--text); font-family: 'Inter', sans-serif;">
+                    <option value="green">Green</option>
+                    <option value="purple">Purple</option>
+                    <option value="pink">Pink</option>
+                </select>
+                <button onclick="addGoal()">Create</button>
+            </div>
+        </div>
+
+        <!-- TASKS -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">✅ Tasks</div>
+                <button class="small secondary" onclick="clearDoneTasks()">Clear Done</button>
+            </div>
+            <div class="task-input-row">
+                <input type="text" id="taskInput" placeholder="What needs to get done?" onkeydown="if(event.key==='Enter')addTask()">
+                <select id="taskPriority" style="padding: 12px; background: var(--bg); border: 1px solid var(--card-border); border-radius: 10px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 0.85rem; width: 100px;">
+                    <option value="med">Med</option>
+                    <option value="high">High</option>
+                    <option value="low">Low</option>
+                </select>
+                <button onclick="addTask()" style="background: var(--accent2);">+ Add</button>
+            </div>
+            <div class="task-filters">
+                <button class="task-filter active" data-filter="all" onclick="filterTasks('all', this)">All</button>
+                <button class="task-filter" data-filter="active" onclick="filterTasks('active', this)">Active</button>
+                <button class="task-filter" data-filter="done" onclick="filterTasks('done', this)">Done</button>
+            </div>
+            <ul class="task-list" id="taskList"></ul>
+        </div>
+
+    </div>
+
+    <script>
+        // ============ DATA LAYER ============
+        function getData(key, fallback) {
+            try { return JSON.parse(localStorage.getItem(key)) || fallback; }
+            catch { return fallback; }
+        }
+        function setData(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+
+        // ============ DATE HELPERS ============
+        function todayStr() { return new Date().toISOString().split('T')[0]; }
+        function getWeekStart() {
+            const d = new Date(); d.setDate(d.getDate() - d.getDay() + 1);
+            return d.toISOString().split('T')[0];
+        }
+        function getMonthStart() {
+            const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;
+        }
+
+        // ============ QUOTES ============
+        const quotes = [
+            "The grind doesn't stop just because you're tired.",
+            "Discipline is choosing between what you want now and what you want most.",
+            "Lock in. Execute. Repeat.",
+            "Small daily improvements over time lead to stunning results.",
+            "You didn't come this far to only come this far.",
+            "Outwork everyone. Quietly.",
+            "The money you want is a reflection of the value you create.",
+            "Stop planning. Start doing.",
+            "Every dollar counts. Every day counts.",
+            "Build in silence. Let the results be the noise.",
+            "Comfort is the enemy of progress.",
+            "You're one decision away from a completely different life.",
+            "Stack skills. Stack money. Stay humble.",
+            "The best time to start was yesterday. The second best time is now.",
+            "Don't count the days. Make the days count.",
+        ];
+
+        // ============ STREAK ============
+        function updateStreak() {
+            const logs = getData('income_logs', []);
+            const today = todayStr();
+            let streak = 0;
+            let checkDate = new Date();
+
+            // Check if today has entries
+            const hasToday = logs.some(l => l.date === today);
+            if (!hasToday) checkDate.setDate(checkDate.getDate() - 1);
+
+            while (true) {
+                const ds = checkDate.toISOString().split('T')[0];
+                if (logs.some(l => l.date === ds)) {
+                    streak++;
+                    checkDate.setDate(checkDate.getDate() - 1);
+                } else break;
+            }
+            document.getElementById('streakCount').textContent = streak;
+        }
+
+        // ============ INCOME ============
+        function logIncome() {
+            const amount = parseFloat(document.getElementById('incomeAmount').value);
+            const note = document.getElementById('incomeNote').value.trim();
+            const source = document.getElementById('incomeSource').value;
+            if (!amount || amount <= 0) return;
+
+            const logs = getData('income_logs', []);
+            logs.unshift({
+                id: Date.now(),
+                amount,
+                note: note || source,
+                source,
+                date: todayStr(),
+                timestamp: new Date().toISOString()
+            });
+            setData('income_logs', logs);
+            document.getElementById('incomeAmount').value = '';
+            document.getElementById('incomeNote').value = '';
+            renderIncome();
+            updateStreak();
+        }
+
+        function deleteLog(id) {
+            let logs = getData('income_logs', []);
+            logs = logs.filter(l => l.id !== id);
+            setData('income_logs', logs);
+            renderIncome();
+            updateStreak();
+        }
+
+        function clearIncome() {
+            if (!confirm('Clear all income logs? This cannot be undone.')) return;
+            setData('income_logs', []);
+            renderIncome();
+            updateStreak();
+        }
+
+        function renderIncome() {
+            const logs = getData('income_logs', []);
+            const today = todayStr();
+            const weekStart = getWeekStart();
+            const monthStart = getMonthStart();
+
+            const todaySum = logs.filter(l => l.date === today).reduce((s, l) => s + l.amount, 0);
+            const weekSum = logs.filter(l => l.date >= weekStart).reduce((s, l) => s + l.amount, 0);
+            const monthSum = logs.filter(l => l.date >= monthStart).reduce((s, l) => s + l.amount, 0);
+            const allSum = logs.reduce((s, l) => s + l.amount, 0);
+
+            document.getElementById('todayTotal').textContent = '$' + todaySum.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 2});
+            document.getElementById('weekTotal').textContent = '$' + weekSum.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 2});
+            document.getElementById('monthTotal').textContent = '$' + monthSum.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 2});
+            document.getElementById('allTotal').textContent = '$' + allSum.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 2});
+
+            const container = document.getElementById('logEntries');
+            container.innerHTML = logs.slice(0, 50).map(l => `
+                <div class="log-entry">
+                    <span class="source-tag src-${l.source}">${l.source}</span>
+                    <span class="task-text" style="margin-left: 12px; color: var(--text-dim); font-size: 0.8rem;">${l.note}</span>
+                    <span class="log-date">${formatDate(l.date)}</span>
+                    <span class="amount">+$${l.amount.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 2})}</span>
+                    <button class="delete-log" onclick="deleteLog(${l.id})">✕</button>
+                </div>
+            `).join('');
+        }
+
+        function formatDate(dateStr) {
+            const d = new Date(dateStr + 'T12:00:00');
+            const today = new Date();
+            if (dateStr === todayStr()) return 'Today';
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            if (dateStr === yesterday.toISOString().split('T')[0]) return 'Yesterday';
+            return d.toLocaleDateString('en-NZ', { day: 'numeric', month: 'short' });
+        }
+
+        // ============ GOALS ============
+        const defaultGoals = [
+            { id: 1, emoji: '🏎️', name: 'BMW G82 M4', target: 120000, current: 0, color: 'green' },
+            { id: 2, emoji: '❤️', name: "Mum's Credit Card Debt", target: 10000, current: 0, color: 'pink' },
+        ];
+
+        function renderGoals() {
+            const goals = getData('goals', defaultGoals);
+            const container = document.getElementById('goalsContainer');
+            container.innerHTML = goals.map(g => {
+                const pct = Math.min((g.current / g.target) * 100, 100);
+                const colorClass = g.color === 'purple' ? 'goal-purple' : g.color === 'pink' ? 'goal-pink' : '';
+                return `
+                    <div class="goal ${colorClass}">
+                        <div class="goal-top">
+                            <div class="goal-name">${g.emoji} ${g.name}</div>
+                            <div class="goal-amounts"><span>$${g.current.toLocaleString()}</span> / $${g.target.toLocaleString()}</div>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: ${pct}%"></div></div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="goal-pct">${pct.toFixed(1)}%</div>
+                            <div class="goal-actions">
+                                <input type="number" id="goalAdd_${g.id}" placeholder="$" step="0.01">
+                                <button class="small" onclick="addToGoal(${g.id})">+ Add</button>
+                                <button class="small danger" onclick="removeGoal(${g.id})" style="padding: 6px 8px;">✕</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function addToGoal(id) {
+            const input = document.getElementById('goalAdd_' + id);
+            const amount = parseFloat(input.value);
+            if (!amount || amount <= 0) return;
+            const goals = getData('goals', defaultGoals);
+            const goal = goals.find(g => g.id === id);
+            if (goal) { goal.current += amount; setData('goals', goals); }
+            renderGoals();
+        }
+
+        function removeGoal(id) {
+            if (!confirm('Remove this goal?')) return;
+            let goals = getData('goals', defaultGoals);
+            goals = goals.filter(g => g.id !== id);
+            setData('goals', goals);
+            renderGoals();
+        }
+
+        function toggleAddGoal() {
+            document.getElementById('addGoalForm').classList.toggle('show');
+        }
+
+        function addGoal() {
+            const emoji = document.getElementById('newGoalEmoji').value || '🎯';
+            const name = document.getElementById('newGoalName').value.trim();
+            const target = parseFloat(document.getElementById('newGoalTarget').value);
+            const color = document.getElementById('newGoalColor').value;
+            if (!name || !target) return;
+            const goals = getData('goals', defaultGoals);
+            goals.push({ id: Date.now(), emoji, name, target, current: 0, color });
+            setData('goals', goals);
+            document.getElementById('newGoalName').value = '';
+            document.getElementById('newGoalTarget').value = '';
+            document.getElementById('newGoalEmoji').value = '';
+            document.getElementById('addGoalForm').classList.remove('show');
+            renderGoals();
+        }
+
+        // ============ TASKS ============
+        let currentFilter = 'all';
+
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            const text = input.value.trim();
+            const priority = document.getElementById('taskPriority').value;
+            if (!text) return;
+            const tasks = getData('tasks', []);
+            tasks.unshift({ id: Date.now(), text, priority, done: false, created: todayStr() });
+            setData('tasks', tasks);
+            input.value = '';
+            renderTasks();
+        }
+
+        function toggleTask(id) {
+            const tasks = getData('tasks', []);
+            const task = tasks.find(t => t.id === id);
+            if (task) { task.done = !task.done; setData('tasks', tasks); }
+            renderTasks();
+        }
+
+        function deleteTask(id) {
+            let tasks = getData('tasks', []);
+            tasks = tasks.filter(t => t.id !== id);
+            setData('tasks', tasks);
+            renderTasks();
+        }
+
+        function clearDoneTasks() {
+            let tasks = getData('tasks', []);
+            tasks = tasks.filter(t => !t.done);
+            setData('tasks', tasks);
+            renderTasks();
+        }
+
+        function filterTasks(filter, btn) {
+            currentFilter = filter;
+            document.querySelectorAll('.task-filter').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderTasks();
+        }
+
+        function renderTasks() {
+            let tasks = getData('tasks', []);
+            if (currentFilter === 'active') tasks = tasks.filter(t => !t.done);
+            else if (currentFilter === 'done') tasks = tasks.filter(t => t.done);
+
+            document.getElementById('taskList').innerHTML = tasks.map(t => `
+                <li class="task-item ${t.done ? 'done' : ''}">
+                    <div class="task-check" onclick="toggleTask(${t.id})">${t.done ? '✓' : ''}</div>
+                    <span class="task-text">${t.text}</span>
+                    <span class="task-priority ${t.priority}">${t.priority}</span>
+                    <button class="task-delete" onclick="deleteTask(${t.id})">✕</button>
+                </li>
+            `).join('');
+        }
+
+        // ============ INIT ============
+        function init() {
+            // Date
+            const now = new Date();
+            const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-NZ', opts);
+
+            // Quote
+            const dayIndex = Math.floor(now.getTime() / 86400000) % quotes.length;
+            document.getElementById('quoteBar').textContent = `"${quotes[dayIndex]}"`;
+
+            // Render
+            renderIncome();
+            renderGoals();
+            renderTasks();
+            updateStreak();
+
+            // Initialize default goals if first visit
+            if (!localStorage.getItem('goals')) {
+                setData('goals', defaultGoals);
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
