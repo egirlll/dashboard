@@ -472,10 +472,20 @@ function addGoal(){
     document.getElementById('newGoalName').value='';document.getElementById('newGoalTarget').value='';document.getElementById('newGoalEmoji').value='';toggleAddGoal();renderGoals();
 }
 
-// DAILY
-function getDailyKey(){return'daily_tasks_'+todayStr()}
-function getDailyTasks(){return getData(getDailyKey(),[])}
-function setDailyTasks(t){setData(getDailyKey(),t)}
+// DAILY — persistent tasks that reset (uncheck) each new day
+function getDailyTasks(){return getData('daily_tasks',[])}
+function setDailyTasks(t){setData('daily_tasks',t)}
+function checkDailyReset(){
+    const last=localStorage.getItem('daily_last_reset');
+    const today=todayStr();
+    if(last!==today){
+        // New day — uncheck all tasks but keep them
+        const t=getDailyTasks();
+        t.forEach(x=>x.done=false);
+        setDailyTasks(t);
+        localStorage.setItem('daily_last_reset',today);
+    }
+}
 function addDailyTask(){
     const i=document.getElementById('dailyTaskInput'),ti=document.getElementById('dailyTaskTime'),txt=i.value.trim(),due=ti.value||null;
     if(!txt)return;const t=getDailyTasks();t.push({id:Date.now(),text:txt,done:false,due});
@@ -527,6 +537,7 @@ function renderTasks(){
 (function(){
     document.getElementById('currentDate').textContent=new Date().toLocaleDateString('en-NZ',{weekday:'long',year:'numeric',month:'long',day:'numeric',timeZone:TZ}).toUpperCase();
     if(!localStorage.getItem('goals'))setData('goals',defaultGoals);
+    checkDailyReset();
     renderIncome();renderGoals();renderDailyTasks();renderTasks();updateStreak();updateClock();
 })();
 </script>
