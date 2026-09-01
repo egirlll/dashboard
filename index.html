@@ -174,7 +174,7 @@
         /* MONEY STATS */
         .money-stats {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 12px;
         }
         .stat-box {
@@ -746,10 +746,6 @@
                     <div class="label">This Month</div>
                     <div class="value" id="monthTotal">$0</div>
                 </div>
-                <div class="stat-box">
-                    <div class="label">All Time</div>
-                    <div class="value" id="allTotal">$0</div>
-                </div>
             </div>
             <div class="collapse-form" id="incomeForm">
                 <div class="form-inner">
@@ -957,7 +953,6 @@
             document.getElementById('todayTotal').textContent = fmt(logs.filter(l=>l.date===today).reduce((s,l)=>s+l.amount,0));
             document.getElementById('weekTotal').textContent = fmt(logs.filter(l=>l.date>=weekStart).reduce((s,l)=>s+l.amount,0));
             document.getElementById('monthTotal').textContent = fmt(logs.filter(l=>l.date>=monthStart).reduce((s,l)=>s+l.amount,0));
-            document.getElementById('allTotal').textContent = fmt(logs.reduce((s,l)=>s+l.amount,0));
             const container = document.getElementById('logEntries');
             if (logs.length === 0) {
                 container.innerHTML = '';
