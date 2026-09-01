@@ -875,25 +875,43 @@
             }
         }
 
-        // ============ DATE ============
-        function todayStr() { return new Date().toISOString().split('T')[0]; }
+        // ============ DATE (NZ TIME) ============
+        const TZ = 'Pacific/Auckland';
+        function nzNow() {
+            // Get current date/time parts in NZ timezone
+            const parts = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date());
+            const get = type => parts.find(p => p.type === type).value;
+            return { year: get('year'), month: get('month'), day: get('day'), hour: parseInt(get('hour')), minute: parseInt(get('minute')) };
+        }
+        function todayStr() {
+            const n = nzNow();
+            return `${n.year}-${n.month}-${n.day}`;
+        }
         function getWeekStart() {
-            const d = new Date();
+            // Build a Date from NZ date, find Monday
+            const n = nzNow();
+            const d = new Date(`${n.year}-${n.month}-${n.day}T12:00:00`);
             const day = d.getDay();
             const diff = d.getDate() - day + (day === 0 ? -6 : 1);
             d.setDate(diff);
             return d.toISOString().split('T')[0];
         }
         function getMonthStart() {
-            const d = new Date();
-            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;
+            const n = nzNow();
+            return `${n.year}-${n.month}-01`;
         }
         function formatDate(dateStr) {
             if (dateStr === todayStr()) return 'Today';
-            const y = new Date(); y.setDate(y.getDate()-1);
-            if (dateStr === y.toISOString().split('T')[0]) return 'Yesterday';
+            const n = nzNow();
+            const yd = new Date(`${n.year}-${n.month}-${n.day}T12:00:00`);
+            yd.setDate(yd.getDate() - 1);
+            if (dateStr === yd.toISOString().split('T')[0]) return 'Yesterday';
             const d = new Date(dateStr + 'T12:00:00');
             return d.toLocaleDateString('en-NZ', { day: 'numeric', month: 'short' });
+        }
+        function nzTimeMinutes() {
+            const n = nzNow();
+            return n.hour * 60 + n.minute;
         }
 
         // ============ QUOTES ============
@@ -1082,14 +1100,14 @@
             document.getElementById('dailyBarFill').style.width = pct + '%';
 
             const now = new Date();
-            document.getElementById('dailyDateTag').textContent = now.toLocaleDateString('en-NZ', { weekday: 'short', day: 'numeric', month: 'short' });
+            document.getElementById('dailyDateTag').textContent = now.toLocaleDateString('en-NZ', { weekday: 'short', day: 'numeric', month: 'short', timeZone: TZ });
 
             const list = document.getElementById('dailyTaskList');
             if (tasks.length === 0) {
                 list.innerHTML = '<div class="empty-state"><div class="empty-icon">☀️</div>Hit + to plan your day.</div>';
                 return;
             }
-            const nowMins = now.getHours() * 60 + now.getMinutes();
+            const nowMins = nzTimeMinutes();
             list.innerHTML = tasks.map(t => {
                 let timeHtml = '';
                 if (t.due) {
@@ -1181,7 +1199,7 @@
         // ============ INIT ============
         function init() {
             const now = new Date();
-            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-NZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-NZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: TZ });
             if (quotes.length > 0) {
                 const dayIndex = Math.floor(now.getTime() / 86400000) % quotes.length;
                 document.getElementById('quoteBar').textContent = `"${quotes[dayIndex]}"`;
