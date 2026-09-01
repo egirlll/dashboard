@@ -667,6 +667,47 @@
             gap: 8px;
             align-items: center;
         }
+
+        /* DAILY TASK TIME */
+        .task-time {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--blue-light);
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+        .task-time.overdue {
+            background: rgba(244, 63, 94, 0.12);
+            color: var(--red);
+            animation: pulse-overdue 2s ease-in-out infinite;
+        }
+        .task-time.soon {
+            background: rgba(245, 158, 11, 0.12);
+            color: var(--orange);
+        }
+        @keyframes pulse-overdue {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        input[type="time"] {
+            padding: 12px 12px;
+            background: var(--bg2);
+            border: 1px solid rgba(56, 120, 255, 0.1);
+            border-radius: 10px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            outline: none;
+            color-scheme: dark;
+        }
+        input[type="time"]:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -748,6 +789,7 @@
             <div class="collapse-form" id="dailyForm">
                 <div class="form-inner">
                     <input type="text" id="dailyTaskInput" placeholder="Add today's task..." style="flex:1;" onkeydown="if(event.key==='Enter'){addDailyTask();toggleForm('daily');}">
+                    <input type="time" id="dailyTaskTime" style="width:120px;">
                     <button onclick="addDailyTask()">Add</button>
                 </div>
             </div>
@@ -1022,12 +1064,22 @@
 
         function addDailyTask() {
             const input = document.getElementById('dailyTaskInput');
+            const timeInput = document.getElementById('dailyTaskTime');
             const text = input.value.trim();
+            const due = timeInput.value || null;
             if (!text) return;
             const tasks = getDailyTasks();
-            tasks.push({ id: Date.now(), text, done: false });
+            tasks.push({ id: Date.now(), text, done: false, due });
+            // Sort by due time (no time = end)
+            tasks.sort((a, b) => {
+                if (!a.due && !b.due) return 0;
+                if (!a.due) return 1;
+                if (!b.due) return -1;
+                return a.due.localeCompare(b.due);
+            });
             setDailyTasks(tasks);
             input.value = '';
+            timeInput.value = '';
             renderDailyTasks();
         }
         function toggleDailyTask(id) {
@@ -1060,14 +1112,35 @@
                 list.innerHTML = '<div class="empty-state"><div class="empty-icon">☀️</div>Hit + to plan your day.</div>';
                 return;
             }
-            list.innerHTML = tasks.map(t => `
+            const nowMins = now.getHours() * 60 + now.getMinutes();
+            list.innerHTML = tasks.map(t => {
+                let timeHtml = '';
+                if (t.due) {
+                    const [h, m] = t.due.split(':').map(Number);
+                    const dueMins = h * 60 + m;
+                    const diff = dueMins - nowMins;
+                    let cls = 'task-time';
+                    if (!t.done && diff < 0) cls += ' overdue';
+                    else if (!t.done && diff <= 30 && diff >= 0) cls += ' soon';
+                    // Format 24h to 12h
+                    const hr = h % 12 || 12;
+                    const ampm = h < 12 ? 'am' : 'pm';
+                    const timeStr = `${hr}:${String(m).padStart(2,'0')}${ampm}`;
+                    const label = (!t.done && diff < 0) ? timeStr + ' · overdue' : timeStr;
+                    timeHtml = `<span class="${cls}">${label}</span>`;
+                }
+                return `
                 <li class="task-item ${t.done ? 'done' : ''}">
                     <div class="task-check" onclick="toggleDailyTask(${t.id})">${t.done ? '✓' : ''}</div>
                     <span class="task-text">${t.text}</span>
+                    ${timeHtml}
                     <button class="task-delete" onclick="deleteDailyTask(${t.id})">✕</button>
-                </li>
-            `).join('');
+                </li>`;
+            }).join('');
         }
+
+        // Auto-refresh overdue status every minute
+        setInterval(() => { renderDailyTasks(); }, 60000);
 
         // ============ TASKS ============
         let currentFilter = 'all';
