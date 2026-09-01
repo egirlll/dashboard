@@ -903,23 +903,7 @@
         }
 
         // ============ QUOTES ============
-        const quotes = [
-            "The grind doesn't stop just because you're tired.",
-            "Discipline is choosing between what you want now and what you want most.",
-            "Lock in. Execute. Repeat.",
-            "Small daily improvements over time lead to stunning results.",
-            "You didn't come this far to only come this far.",
-            "Outwork everyone. Quietly.",
-            "The money you want is a reflection of the value you create.",
-            "Stop planning. Start doing.",
-            "Every dollar counts. Every day counts.",
-            "Build in silence. Let the results be the noise.",
-            "Comfort is the enemy of progress.",
-            "You're one decision away from a completely different life.",
-            "Stack skills. Stack money. Stay humble.",
-            "The best time to start was yesterday. The second best time is now.",
-            "Don't count the days. Make the days count.",
-        ];
+        const quotes = [];
 
         // ============ STREAK ============
         function updateStreak() {
@@ -1205,8 +1189,12 @@
         function init() {
             const now = new Date();
             document.getElementById('currentDate').textContent = now.toLocaleDateString('en-NZ', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-            const dayIndex = Math.floor(now.getTime() / 86400000) % quotes.length;
-            document.getElementById('quoteBar').textContent = `"${quotes[dayIndex]}"`;
+            if (quotes.length > 0) {
+                const dayIndex = Math.floor(now.getTime() / 86400000) % quotes.length;
+                document.getElementById('quoteBar').textContent = `"${quotes[dayIndex]}"`;
+            } else {
+                document.getElementById('quoteBar').style.display = 'none';
+            }
             if (!localStorage.getItem('goals')) setData('goals', defaultGoals);
             renderIncome();
             renderGoals();
